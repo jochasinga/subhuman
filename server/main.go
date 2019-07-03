@@ -14,8 +14,13 @@ func (h MyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h(w, r)
 }
 
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
+
 func main() {
 	fs := MyHandler(func(w http.ResponseWriter, r *http.Request) {
+		enableCors(&w)
 		http.FileServer(http.Dir("static"))
 		fmt.Println(r.Method)
 		fmt.Println(r.URL.Path)
