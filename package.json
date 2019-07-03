@@ -1,0 +1,13 @@
+{
+  "name": "homeward",
+  "version": "1.0.0",
+  "description": "Chrome extension to detect and fight back the pixel trackers",
+  "main": "index.js",
+  "author": "Joe Chasinga <jo.chasinga@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.9.0",
+    "bulma": "^0.7.5",
+    "hover.css": "^2.3.2"
+  }
+}
