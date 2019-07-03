@@ -3,11 +3,11 @@ if (window.Worker) {
 }
 
 let pixelTag = document.querySelector("img[width='1'], img[height='1']")
-let src = pixelTag.src;
-console.log(src);
+let sourceURL = pixelTag.src;
+console.log(sourceURL);
 // let chromeLogo = document.querySelector("img[alt='Chrome: developer']");
-let sentinelImg = chrome.runtime.getURL("images/drone.png");
 pixelTag.src = 'https://i.imgur.com/dVcJU0Y.png';
+// let sentinelImg = chrome.runtime.getURL("images/drone.png");
 // pixelTag.src = sentinelImg;
 pixelTag.style.width = '4rem';
 pixelTag.style.height = 'auto';
@@ -15,7 +15,7 @@ pixelTag.className = "hvr-bob";
 
 
 pixelTag.onclick = function(e) {
-  console.log(e);
+  /* Attack action */
   let n = 0;
   let interval = setInterval(() => {
     if (n >= 50) {
@@ -41,9 +41,36 @@ pixelTag.onclick = function(e) {
     n++;
   }, 200);
 
-  // fetch(src).then((img) => {
-  //   console.log(img);
-  // });
+  let workerCode = `
+  onmessage = function(e) {
+    console.log('Worker: Message received');
+    fetch(e.data[0]).then((data) => {
+      this.postMessage('done fetching');
+      console.log(data);
+    });
+  }
+  `;
+
+  /* Attack */
+  if (window.Worker) {
+    let URL = window.webkitURL || window.URL;
+    let bb = new Blob([workerCode], {type: 'text/javascript'});
+    let workerfile = URL.createObjectURL(bb);
+
+    // Three workers for now
+    // TODO: This should be configurable by the user.
+    for (let n in [1, 2, 3]) {
+      let myworker = new Worker(workerfile);
+      myworker.postMessage([sourceURL]);
+      console.log('Message posted to worker');
+
+      myworker.onmessage = function(e) {
+        let result = e.data;
+        console.log('Message received from worker: ' + result);
+        myworker.terminate();
+      };
+    }
+  }
 };
 
 function getRandomAngle(min, max) {
