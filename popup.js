@@ -1,5 +1,9 @@
 let changeColor = document.getElementById('changeColor');
 let red = document.getElementById('red');
+let switchRoundedDanger = document.getElementById('switchRoundedDanger');
+switchRoundedDanger.onchange = function(e) {
+  console.log('attack toggled', e);
+};
 
 chrome.storage.sync.get('color', function(data) {
   changeColor.style.backgroundColor = data.color;
@@ -33,7 +37,7 @@ onmessage = function(e) {
   }
 }
 `;
-  
+
   let code = `
 if (window.Worker) {
   let URL = window.webkitURL || window.URL;

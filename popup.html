@@ -1,49 +1,79 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link href="https://fonts.googleapis.com/css?family=Arvo&display=swap" rel="stylesheet">
     <link
       rel="stylesheet"
       type="text/css"
-      href="node_modules/@fortawesome/fontawesome-free/css/all.min.css"/>
+      href="./node_modules/@fortawesome/fontawesome-free/css/all.min.css" />
     <link
       rel="stylesheet"
       type="text/css"
-      href="./node_modules/bulma/css/bulma.min.css"/>
-    <!--
+      href="./node_modules/bulma/css/bulma.min.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="node_modules/bulma-switch/dist/css/bulma-switch.min.css" />
+
     <style>
-      button {
-          height: 30px;
-          width: 30px;
-          outline: none;
+      .card {
+        width: 300px;
+      }
+      .card-header {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+      .title {
+        font-family: 'Arvo', serif;
+        font-size: 1.3rem;
+        font-weight: 500;
       }
     </style>
-    -->
   </head>
   <body>
     <div class="card">
       <header class="card-header">
-	<p class="card-header-title">
-	  Component
-	</p>
-	<a href="#" class="card-header-icon" aria-label="more options">
-	  <span class="icon">
-            <i class="fas fa-angle-down" aria-hidden="true"></i>
-	  </span>
-	</a>
+        <div class="card-header-title">
+          <span class="icon">
+            <i class="fas fa-dot-circle" aria-hidden="true"></i>
+          </span>
+          <p class="title">Artillery</p>
+        </div>
+        <a href="#" class="card-header-icon" aria-label="more options">
+        </a>
       </header>
       <div class="card-content">
-	<div class="content">
-	  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
-	  <a href="#">@bulmaio</a>. <a href="#">#css</a> <a href="#">#responsive</a>
-	  <br>
-	  <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
-	</div>
+        <div class="content">
+          <div class="field">
+            <input id="switchRoundedDefault"
+              type="checkbox"
+              name="switchRoundedDefault"
+              class="switch is-rounded"
+              checked="checked">
+            <label for="switchRoundedDefault">
+              Expose tag on this site.
+            </label>
+          </div>
+          <div class="field">
+            <input
+              id="switchRoundedDanger"
+              type="checkbox"
+              name="switchRoundedDanger"
+              class="switch is-rounded is-danger"
+              checked="checked">
+            <label for="switchRoundedDanger">
+              Turn on <strong>Attack Mode</strong>.
+            </label>
+          </div>
+        </div>
       </div>
+
       <footer class="card-footer">
-	<button class="card-footer-item" id="changeColor">Save</button>
-	<button class="card-footer-item" id="red">Red</button>
-	<a href="#" class="card-footer-item">Delete</a>
+        <button class="card-footer-item" id="changeColor">Save</button>
+        <button class="card-footer-item" id="red">Red</button>
+        <a href="#" class="card-footer-item">Delete</a>
       </footer>
+
       <!--<button class="is-primary" id="changeColor"></button>-->
     </div>
     <script src="popup.js"></script>
