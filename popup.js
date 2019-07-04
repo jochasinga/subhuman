@@ -1,8 +1,43 @@
 let changeColor = document.getElementById('changeColor');
 let red = document.getElementById('red');
-let switchRoundedDanger = document.getElementById('switchRoundedDanger');
-switchRoundedDanger.onchange = function(e) {
-  console.log('attack toggled', e);
+
+let exposeSwitch = document.getElementById('exposeSwitch');
+let attackSwitch = document.getElementById('attackSwitch');
+let disclaimer = document.getElementById('attackDisclaimer');
+
+exposeSwitch.onchange = function(e) {
+  console.log('expose toggled', e, exposeSwitch.checked);
+  let state = exposeSwitch.checked;
+  chrome.browserAction.setBadgeBackgroundColor({color: '#ff8857'});
+  let text = '';
+  if (!state) {
+    attackSwitch.checked = false;
+  } else {
+    text = '☀';
+  }
+  chrome.browserAction.setBadgeText({text});
+}
+
+attackSwitch.onchange = function(e) {
+  console.log('attack toggled', e, attackSwitch.checked);
+  attackDisclaimer.classList.toggle('is-hidden');
+  let state = attackSwitch.checked;
+  if (state) {
+    exposeSwitch.checked = state;
+    chrome.browserAction.setBadgeBackgroundColor({color: '#ff3860'});
+    chrome.browserAction.setBadgeText({text: 'A'});
+  } else {
+    chrome.browserAction.setBadgeText({text: ''});
+  }
+
+
+
+  // send message to contentScript
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, {attackMode: true});
+
+  });
+
 };
 
 chrome.storage.sync.get('color', function(data) {
@@ -64,4 +99,12 @@ if (window.Worker) {
       tabs[0].id,
       {code: code});
   }); */
+  chrome.runtime.onMessage.addListener((message, _sender, _res) => {
+    const {type} = message;
+    if (type === 'setBadgeBackgroundColor') {
+      console.log('setting yellow bg');
+      const {color} = message;
+      chrome.browserAction.setBadgeBackgroundColor({color});
+    }
+  });
 };

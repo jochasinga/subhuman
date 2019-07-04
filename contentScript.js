@@ -2,13 +2,21 @@ if (window.Worker) {
   console.log('Worker ok');
 }
 
-let pixelTag = document.querySelector("img[width='1'], img[height='1']")
+let pixelTag = document.querySelector("img[width='1'], img[height='1']");
+
+chrome.runtime.sendMessage(undefined, {
+  type: 'setBadgeBackgroundColor',
+  color: '#ffdb4a'
+});
+
 let sourceURL = pixelTag.src;
-console.log(sourceURL);
+
+// console.log(sourceURL);
 // let chromeLogo = document.querySelector("img[alt='Chrome: developer']");
-pixelTag.src = 'https://i.imgur.com/dVcJU0Y.png';
 // let sentinelImg = chrome.runtime.getURL("images/drone.png");
 // pixelTag.src = sentinelImg;
+
+pixelTag.src = 'https://i.imgur.com/dVcJU0Y.png';
 pixelTag.style.width = '4rem';
 pixelTag.style.height = 'auto';
 pixelTag.className = "hvr-bob";
@@ -78,3 +86,11 @@ function getRandomAngle(min, max) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min;
 }
+
+chrome.runtime.onMessage.addListener((message, _sender, _res) => {
+  const {attackMode} = message;
+  console.log(`got message attack moder: ${attackMode}`);
+  chrome.storage.sync.set({attackMode}, function() {
+    console.debug(`attack mode is now ${attackMode}`);
+  });
+});

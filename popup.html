@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset='utf-8'>
     <link href="https://fonts.googleapis.com/css?family=Arvo&display=swap" rel="stylesheet">
     <link
       rel="stylesheet"
@@ -17,7 +18,7 @@
 
     <style>
       .card {
-        width: 300px;
+        width: 400px;
       }
       .card-header {
         padding-left: 8px;
@@ -27,6 +28,9 @@
         font-family: 'Arvo', serif;
         font-size: 1.3rem;
         font-weight: 500;
+      }
+      .disclaimer {
+        overflow-y: scroll;
       }
     </style>
   </head>
@@ -45,33 +49,63 @@
       <div class="card-content">
         <div class="content">
           <div class="field">
-            <input id="switchRoundedDefault"
+            <input id="exposeSwitch"
               type="checkbox"
-              name="switchRoundedDefault"
+              name="exposeSwitch"
               class="switch is-rounded"
-              checked="checked">
-            <label for="switchRoundedDefault">
-              Expose tag on this site.
+              checked="true">
+            <label for="exposeSwitch" id="exposeLabel">
+              Expose tracked pixel on this site.
             </label>
           </div>
           <div class="field">
             <input
-              id="switchRoundedDanger"
+              id="attackSwitch"
               type="checkbox"
-              name="switchRoundedDanger"
-              class="switch is-rounded is-danger"
-              checked="checked">
-            <label for="switchRoundedDanger">
+              name="attackSwitch"
+              class="switch is-rounded is-danger">
+            <label for="attackSwitch">
               Turn on <strong>Attack Mode</strong>.
             </label>
           </div>
+          <div id="attackDisclaimer" class="disclaimer is-hidden">
+            <hr />
+            <p>
+              <strong>Attack Mode</strong> is enabled.
+              It employs many
+              <a
+                class="is-link"
+                href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers">
+                Web Workers
+              </a> to send HTTP requests to the source URL of the
+              pixel tag in an attempt to overload the service (or send a message 🤔). Follow the steps:
+              <br />
+              <ul>
+                <li>Locate the floating sentinel. That's the tracked pixel.</li>
+                <li>Click on the it and watch it goes under attack.</li>
+                <li>Brace yourself as your CPU usage sky-rockets.</li>
+                <li>To stop the attack, Click <a class="button is-dark is-small is-rounded">Stop</a> or toggle the switch OFF.</li>
+              </ul>
+              <hr />
+              <span><strong>The maker of Artillery is not responsible for
+              the consequences whatsoever (except good ones, of course).</strong></span>
+            </p>
+          </div>
         </div>
       </div>
+      <!--
+      <a class="button is-danger is-large" id="changeColor" disabled>Attack</a>
+      <a class="button is-dark is-large" id="red" disabled>Stop</a>
+      -->
 
       <footer class="card-footer">
-        <button class="card-footer-item" id="changeColor">Save</button>
-        <button class="card-footer-item" id="red">Red</button>
-        <a href="#" class="card-footer-item">Delete</a>
+        <a class="card-footer-item" id="changeColor">
+          <span style="font-color: red">Change Color</span>
+        </a>
+        <a class="card-footer-item" id="red">
+          <span style="font-color: black">Stop</span>
+        </a>
+        <!--<a href="#" class="card-footer-item">Delete</a>-->
       </footer>
 
       <!--<button class="is-primary" id="changeColor"></button>-->
