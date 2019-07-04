@@ -10,17 +10,12 @@ chrome.runtime.sendMessage(undefined, {
 });
 
 let sourceURL = pixelTag.src;
-
-// console.log(sourceURL);
-// let chromeLogo = document.querySelector("img[alt='Chrome: developer']");
-// let sentinelImg = chrome.runtime.getURL("images/drone.png");
-// pixelTag.src = sentinelImg;
-
-pixelTag.src = 'https://i.imgur.com/dVcJU0Y.png';
+let sentinelImg = chrome.runtime.getURL("images/drone.png");
+pixelTag.src = sentinelImg;
+// pixelTag.src = 'https://i.imgur.com/dVcJU0Y.png';
 pixelTag.style.width = '4rem';
 pixelTag.style.height = 'auto';
 pixelTag.className = "hvr-bob";
-
 
 pixelTag.onclick = function(e) {
   /* Attack action */
