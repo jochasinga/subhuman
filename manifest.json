@@ -10,7 +10,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://*.chrome.com/*", "http://localhost:3000/*"],
+      "matches": ["*://*/*"],
       "css": ["css/content.css"],
       "js": ["contentScript.js"]
     }
