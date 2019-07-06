@@ -1,4 +1,6 @@
-chrome.storage.local.clear();
+chrome.storage.local.clear(() => {
+  console.log('local storage cleared');
+});
 
 chrome.storage.local.set({green: true}, () => {
   console.log('green is go');
@@ -7,12 +9,38 @@ chrome.storage.local.set({red: false}, () => {
   console.log('red is no');
 });
 
-let pixelTag = document.querySelector("img[width='1'], img[height='1']");
+let pixelTag = findPixelTag();
 const sourceURL = pixelTag.src;
 const replaceURL = chrome.runtime.getURL("images/drone.png");
 const width = '4rem';
 const height = 'auto';
 const className = 'hvr-bob';
+
+function findPixelTag() {
+  console.log('findPixelTag');
+  let pixelTag = document.querySelector("img[width='1'], img[height='1']");
+    if (pixelTag) {
+    console.log('found a pixel');
+    // chrome.runtime.sendMessage({found: true}, () => {
+    chrome.runtime.sendMessage({found: true}, function() {
+      console.log('found one');
+    });
+    chrome.storage.local.set({found: true});
+    chrome.storage.local.get(['green'], (data) => {
+      if (data.green) {
+        showDrone();
+      }
+    });
+  } else {
+    console.log('no pixel found');
+    chrome.runtime.sendMessage({found: false}, () => {
+      console.log('not found');
+    });
+    chrome.storage.local.set({found: false});
+  }
+  return pixelTag;
+}
+
 
 function showDrone() {
   console.log('show');
@@ -95,28 +123,39 @@ function hideDrone() {
 // Checked
 chrome.runtime.onMessage.addListener((message) => {
   console.log('receiving');
-  const {type, data} = message;
-  if (type === 'show') {
-    if (data) {
-      showDrone();
-    } else {
-      hideDrone();
+  if (message === 'findTag') {
+    findPixelTag();
+  } else {
+    const {type, data} = message;
+    if (type === 'show') {
+      if (data) {
+        showDrone();
+      } else {
+        hideDrone();
+      }
     }
   }
 });
 
-if (pixelTag) {
-  console.log('found a pixel');
-  chrome.runtime.sendMessage({found: true}, () => {
-    console.log('found one');
-    chrome.storage.local.set({found: true});
-  });
-  chrome.storage.local.get(['green'], (data) => {
-    if (data.green) {
-      showDrone();
-    }
-  });
-}
+// if (pixelTag) {
+//   console.log('found a pixel');
+//   // chrome.runtime.sendMessage({found: true}, () => {
+//   chrome.runtime.sendMessage({found: true}, function() {
+//     console.log('found one');
+//   });
+//   chrome.storage.local.set({found: true});
+//   chrome.storage.local.get(['green'], (data) => {
+//     if (data.green) {
+//       showDrone();
+//     }
+//   });
+// } else {
+//   console.log('no pixel found');
+//   chrome.runtime.sendMessage({found: false}, () => {
+//     console.log('not found');
+//   });
+//   chrome.storage.local.set({found: false});
+// }
 
 function getRandomAngle(min, max) {
   min = Math.ceil(min);

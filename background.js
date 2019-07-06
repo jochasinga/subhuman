@@ -4,19 +4,13 @@
 
 'use strict';
 
+const ORANGE = '#ff8857';
+const RED = '#ff3860';
+const O = '●';
+
 chrome.runtime.onInstalled.addListener(function() {
-  // chrome.storage.sync.set({color: '#3aa757'}, function() {
-  //   console.log("The color is green.");
-  // });
-
-  // chrome.storage.sync.set({attackMode: false}, function() {
-  //   console.log('Attack Mode switched off by default');
-  // });
-
-  // chrome.storage.sync.set({found: false}, function() {
-  //   console.log('Expose on by default');
-  // });
-
+  chrome.storage.local.set({green: true});
+  chrome.storage.local.set({red: false});
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
     chrome.declarativeContent.onPageChanged.addRules([{
       conditions: [new chrome.declarativeContent.PageStateMatcher({
@@ -28,13 +22,39 @@ chrome.runtime.onInstalled.addListener(function() {
   });
 });
 
-// chrome.runtime.onMessage.addListener(function(message, _sender, _res) {
-//   console.log('HERE');
-//   const {type} = message;
-//   if (type === 'setBadgeBackgroundColor') {
-//     console.log('setting orange bg');
-//     const {text, color} = message;
-//     chrome.browserAction.setBadgeBackgroundColor({color});
-//     chrome.browserAction.setBadgeText({text});
-//   }
-// });
+chrome.tabs.onActivated.addListener((info) => {
+  console.log(info);
+  chrome.storage.local.clear();
+  hideBadge();
+  chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+    const activeTabID = tabs[0].id;
+    chrome.tabs.sendMessage(activeTabID, 'findTag', () => {
+      console.log('sent a findTag message');
+    });
+  })
+});
+
+chrome.runtime.onMessage.addListener((message) => {
+  console.log('background received message ' + message);
+  if (message.found !== undefined) {
+    if (message.found) {
+      showFoundBadge();
+      // chrome.runtime.sendMessage(message, () => {
+      //   console.log('background sent to popup');
+      // });
+    } else {
+      hideBadge();
+    }
+    // chrome.runtime.Port.disconnect();
+  }
+});
+
+function showFoundBadge() {
+  chrome.browserAction.setBadgeBackgroundColor({color: ORANGE});
+  chrome.browserAction.setBadgeText({text: O});
+  chrome.browserAction.setTitle({title: "Found a possible pixel tag"});
+}
+
+function hideBadge() {
+  chrome.browserAction.setBadgeText({text: ''});
+}
