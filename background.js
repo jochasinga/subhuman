@@ -5,17 +5,17 @@
 'use strict';
 
 chrome.runtime.onInstalled.addListener(function() {
-  chrome.storage.sync.set({color: '#3aa757'}, function() {
-    console.log("The color is green.");
-  });
+  // chrome.storage.sync.set({color: '#3aa757'}, function() {
+  //   console.log("The color is green.");
+  // });
 
-  chrome.storage.sync.set({attackMode: false}, function() {
-    console.log('Attack Mode switched off by default');
-  });
+  // chrome.storage.sync.set({attackMode: false}, function() {
+  //   console.log('Attack Mode switched off by default');
+  // });
 
-  chrome.storage.sync.set({expose: true}, function() {
-    console.log('Expose on by default');
-  });
+  // chrome.storage.sync.set({found: false}, function() {
+  //   console.log('Expose on by default');
+  // });
 
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
     chrome.declarativeContent.onPageChanged.addRules([{
@@ -27,3 +27,14 @@ chrome.runtime.onInstalled.addListener(function() {
     }]);
   });
 });
+
+// chrome.runtime.onMessage.addListener(function(message, _sender, _res) {
+//   console.log('HERE');
+//   const {type} = message;
+//   if (type === 'setBadgeBackgroundColor') {
+//     console.log('setting orange bg');
+//     const {text, color} = message;
+//     chrome.browserAction.setBadgeBackgroundColor({color});
+//     chrome.browserAction.setBadgeText({text});
+//   }
+// });

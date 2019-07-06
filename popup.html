@@ -15,7 +15,10 @@
       rel="stylesheet"
       type="text/css"
       href="node_modules/bulma-switch/dist/css/bulma-switch.min.css" />
-
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="node_modules/bulma-tooltip/dist/css/bulma-tooltip.min.css" />
     <style>
       .card {
         width: 400px;
@@ -32,6 +35,19 @@
       .disclaimer {
         overflow-y: scroll;
       }
+      .linked-logo {
+        text-decoration: none;
+        color: rgba(0, 0, 0, 0.2);
+      }
+      .linked-logo:hover {
+        color: rgba(0,0,0,0.7);
+      }
+      .brand-logo {
+        color: #6657E1;
+      }
+      .card-header {
+        line-height: 1.8;
+      }
     </style>
   </head>
   <body>
@@ -39,9 +55,9 @@
       <header class="card-header">
         <div class="card-header-title">
           <span class="icon">
-            <i class="fas fa-dot-circle" aria-hidden="true"></i>
-          </span>
-          <p class="title">Artillery</p>
+            <i class="brand-logo fas fa-dot-circle fa-lg" aria-hidden="true"></i>
+          </span>&nbsp;
+          <p class="title">sub·human</p>
         </div>
         <a href="#" class="card-header-icon" aria-label="more options">
         </a>
@@ -72,43 +88,41 @@
             <hr />
             <p>
               <strong>Attack Mode</strong> is enabled.
-              It employs many
+              It employs
               <a
                 class="is-link"
                 href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers">
                 Web Workers
               </a> to send HTTP requests to the source URL of the
-              pixel tag in an attempt to overload the service (or send a message 🤔). Follow the steps:
-              <br />
+              pixel tag in an attempt to annoy the tracking party.<p><strong>Here are the steps:</strong></p>
               <ul>
-                <li>Locate the floating sentinel. That's the tracked pixel.</li>
-                <li>Click on the it and watch it goes under attack.</li>
-                <li>Brace yourself as your CPU usage sky-rockets.</li>
-                <li>To stop the attack, Click <a class="button is-dark is-small is-rounded">Stop</a> or toggle the switch OFF.</li>
+                <li>Locate the floating sentinel. That's the tracked pixel right here.</li>
+                <li>Click on the it and watch it goes berserk.</li>
+                <li>Brace yourself as your CPU usage skyrockets.</li>
+                <li>To stop the attack, just toggle the switch OFF.</li>
               </ul>
-              <hr />
-              <span><strong>The maker of Artillery is not responsible for
-              the consequences whatsoever (except good ones, of course).</strong></span>
+              <p><strong>The maker is not responsible for
+              the consequences whatsoever (except good ones).</strong></p>
             </p>
           </div>
         </div>
       </div>
-      <!--
-      <a class="button is-danger is-large" id="changeColor" disabled>Attack</a>
-      <a class="button is-dark is-large" id="red" disabled>Stop</a>
-      -->
 
       <footer class="card-footer">
-        <a class="card-footer-item" id="changeColor">
-          <span style="font-color: red">Change Color</span>
+        <a href="https://twitter.com/jochasinga"
+          class="linked-logo card-footer-item tooltip"
+          id="changeColor"
+          data-tooltip="Follow me"
+          target="_blank">
+          <i class="fab fa-twitter fa-lg"></i>
         </a>
-        <a class="card-footer-item" id="red">
-          <span style="font-color: black">Stop</span>
+        <a href="https://github.com/subhuman"
+          target="_blank"
+          class="linked-logo card-footer-item tooltip"
+          id="red" data-tooltip="Fork me">
+          <i class="fab fa-github fa-lg"></i>
         </a>
-        <!--<a href="#" class="card-footer-item">Delete</a>-->
       </footer>
-
-      <!--<button class="is-primary" id="changeColor"></button>-->
     </div>
     <script src="popup.js"></script>
   </body>

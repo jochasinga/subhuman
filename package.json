@@ -9,6 +9,7 @@
     "@fortawesome/fontawesome-free": "^5.9.0",
     "bulma": "^0.7.5",
     "bulma-switch": "^2.0.0",
+    "bulma-tooltip": "^2.0.2",
     "hover.css": "^2.3.2"
   }
 }
