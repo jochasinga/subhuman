@@ -3,6 +3,7 @@ let red = document.getElementById('red');
 let exposeSwitch = document.getElementById('exposeSwitch');
 let exposeLabel = document.getElementById('exposeLabel');
 let attackSwitch = document.getElementById('attackSwitch');
+let blockSwitch = document.getElementById('blockSwitch');
 let disclaimer = document.getElementById('attackDisclaimer');
 
 chrome.storage.local.get('green', (data) => {
@@ -13,6 +14,16 @@ chrome.storage.local.get('green', (data) => {
 chrome.storage.local.get('red', (data) => {
   if (data.red) {
     attackSwitchOn();
+  } else {
+    attachSwitchOff();
+  }
+});
+
+chrome.storage.sync.get('blue', (data) => {
+  if (data.blue) {
+    blockSwitchOn();
+  } else {
+    blockSwitchOff();
   }
 });
 
@@ -28,6 +39,10 @@ function messageContentScript(type, data) {
     console.log('sending data to content script at tab ' + tabs[0].id);
     chrome.tabs.sendMessage(tabs[0].id, {type, data});
   });
+}
+
+function messageBackground(type, data) {
+  chrome.runtime.sendMessage({type, data});
 }
 
 function hideBadge() {
@@ -88,6 +103,19 @@ function exposeSwitchOn() {
   chrome.storage.local.set({green: true});
 }
 
+function blockSwitchOn() {
+  blockSwitch.checked = true;
+  chrome.storage.sync.set({blue: true});
+  messageBackground('block', true);
+
+}
+
+function blockSwitchOff() {
+  blockSwitch.checked = false;
+  chrome.storage.sync.set({blue: false});
+  messageBackground('block', false);
+}
+
 function attackSwitchOff() {
   attackSwitch.checked = false;
   attackDisclaimer.classList.add('is-hidden');
@@ -113,6 +141,15 @@ attackSwitch.onchange = function(e) {
     attackSwitchOff();
   }
 };
+
+blockSwitch.onchange = function(e) {
+  let isChecked = blockSwitch.checked;
+  if (isChecked) {
+    blockSwitchOn();
+  } else {
+    blockSwitchOff();
+  }
+}
 
 /* Init */
 

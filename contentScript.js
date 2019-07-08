@@ -1,3 +1,5 @@
+console.log('content run');
+
 chrome.storage.local.clear(() => {
   console.log('local storage cleared');
 });
@@ -10,18 +12,20 @@ chrome.storage.local.set({red: false}, () => {
 });
 
 let pixelTag = findPixelTag();
-const sourceURL = pixelTag.src;
-const replaceURL = chrome.runtime.getURL("images/drone.png");
+let sourceURL = pixelTag.src;
+let replaceURL = chrome.runtime.getURL("images/drone.png");
 const width = '4rem';
 const height = 'auto';
 const className = 'hvr-bob';
 
-function findPixelTag() {
+function findPixelTag(block = true) {
   console.log('findPixelTag');
   let pixelTag = document.querySelector("img[width='1'], img[height='1']");
-    if (pixelTag) {
+  if (pixelTag) {
+    let sourceURL = pixelTag.src;
     console.log('found a pixel');
-    // chrome.runtime.sendMessage({found: true}, () => {
+    chrome.runtime.sendMessage({pixelTagURL: sourceURL});
+    chrome.storage.local.set({pixelTagURL: sourceURL});
     chrome.runtime.sendMessage({found: true}, function() {
       console.log('found one');
     });
@@ -52,7 +56,7 @@ function showDrone() {
   pixelTag.onclick = (_e) => {
     chrome.storage.local.get(['red'], (data) => {
       if (data.red) {
-        console.log('ATTACKING');
+        console.log('ATTACKING ' + sourceURL);
         let n = 0;
         let interval = setInterval(() => {
           if (n >= 50) {
@@ -121,7 +125,7 @@ function hideDrone() {
 }
 
 // Checked
-chrome.runtime.onMessage.addListener((message) => {
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   console.log('receiving');
   if (message === 'findTag') {
     findPixelTag();

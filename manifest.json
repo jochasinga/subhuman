@@ -2,14 +2,23 @@
   "name": "Homeward",
   "version": "0.0.1",
   "description": "Orchestrate DOS attack on tracking pixels",
-  "permissions": ["tabs", "activeTab", "declarativeContent", "storage"],
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>",
+    "tabs",
+    "activeTab",
+    "declarativeContent",
+    "storage"
+  ],
   "options_page": "options.html",
   "background": {
     "scripts": ["background.js"],
-    "persistent": false
+    "persistent": true
   },
   "content_scripts": [
     {
+      "run_at": "document_end",
       "matches": ["*://*/*"],
       "css": ["css/content.css"],
       "js": ["contentScript.js"]
