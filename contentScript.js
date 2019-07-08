@@ -11,6 +11,7 @@ chrome.storage.local.set({red: false}, () => {
   console.log('red is no');
 });
 
+let attacking = false;
 let pixelTag = findPixelTag();
 let sourceURL = pixelTag.src;
 let replaceURL = chrome.runtime.getURL("images/drone.png");
@@ -18,7 +19,7 @@ const width = '4rem';
 const height = 'auto';
 const className = 'hvr-bob';
 
-function findPixelTag(block = true) {
+function findPixelTag() {
   console.log('findPixelTag');
   let pixelTag = document.querySelector("img[width='1'], img[height='1']");
   if (pixelTag) {
@@ -45,6 +46,25 @@ function findPixelTag(block = true) {
   return pixelTag;
 }
 
+// Checked
+// chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+//   console.log('receiving');
+//   if (message === 'findTag') {
+//     findPixelTag();
+//   } else {
+//     const {type, data} = message;
+//     if (type === 'show') {
+//       if (data) {
+//         showDrone();
+//       } else {
+//         hideDrone();
+//       }
+//     } else if (type === 'attacking') {
+//       console.log('attacking => ', data);
+//       attacking = data;
+//     }
+//   }
+// });
 
 function showDrone() {
   console.log('show');
@@ -56,17 +76,17 @@ function showDrone() {
   pixelTag.onclick = (_e) => {
     chrome.storage.local.get(['red'], (data) => {
       if (data.red) {
-        console.log('ATTACKING ' + sourceURL);
-        let n = 0;
+        console.log('Attacking ' + sourceURL);
+        // let n = 0;
         let interval = setInterval(() => {
-          if (n >= 50) {
-            console.debug('done');
-            clearInterval(interval);
-            setTimeout(() => {
-              pixelTag.className = "hvr-bob";
-              pixelTag.style.filter = "hue-rotate(0deg)";
-            }, 1000);
-          }
+          // if (n >= 50) {
+          //   console.debug('done');
+          //   clearInterval(interval);
+          //   setTimeout(() => {
+          //     pixelTag.className = "hvr-bob";
+          //     pixelTag.style.filter = "hue-rotate(0deg)";
+          //   }, 1000);
+          // }
           let val = getRandomAngle(0, 360);
           console.log(val);
           if (pixelTag.className !== 'hvr-buzz') {
@@ -77,16 +97,16 @@ function showDrone() {
           } else {
             pixelTag.style.filter = `hue-rotate(${val}deg)`;
           }
-          console.log(pixelTag.style.filter);
-          n++;
+          // console.log(pixelTag.style.filter);
+          // n++;
         }, 200);
 
         let workerCode = `
         onmessage = function(e) {
           console.log('Worker: Message received');
-          fetch(e.data[0]).then((data) => {
-            this.postMessage('done fetching');
-            console.log(data);
+          let url = e.data[0];
+          fetch(url).then((data) => {
+            this.postMessage('done');
           });
         }
         `;
@@ -96,21 +116,42 @@ function showDrone() {
           let URL = window.webkitURL || window.URL;
           let bb = new Blob([workerCode], {type: 'text/javascript'});
           let workerfile = URL.createObjectURL(bb);
-
-          // Three workers for now
-          // TODO: This should be configurable by the user.
-          for (let n in [1, 2, 3]) {
-            let myworker = new Worker(workerfile);
-            myworker.postMessage([sourceURL]);
-            console.log('Message posted to worker');
-
-            myworker.onmessage = function(e) {
-              let result = e.data;
-              console.log('Message received from worker: ' + result);
-              myworker.terminate();
-            };
+          let maxWorkers = navigator.hardwareConcurrency || 4;
+          let workerPool = [];
+          let counter = maxWorkers - 1;
+          for (let i = 0; i < maxWorkers; i++) {
+            workerPool.push(new Worker(workerfile));
           }
-        }
+
+          let cb = (worker) => {
+            if (!attacking) {
+              console.log('clean up');
+              workerPool.forEach((worker) => worker.terminate());
+              clearInterval(interval);
+              setTimeout(() => {
+                pixelTag.className = "hvr-bob";
+                pixelTag.style.filter = "hue-rotate(0deg)";
+              }, 1000);
+            } else {
+              worker.postMessage([sourceURL]);
+              console.log('Message posted to worker');
+              worker.onmessage = (e) => {
+                let result = e.data;
+                console.log('Message received from worker: ' + result);
+                // worker.terminate();
+                counter--;
+                console.log('counter: ', counter);
+                if (counter <= 0) {
+                  counter = maxWorkers;
+                  workerPool.forEach(cb);
+                }
+              };
+            }
+          };
+
+          workerPool.forEach(cb);
+          // clearInterval(interval);
+        };
       }
     });
   };
@@ -137,6 +178,9 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       } else {
         hideDrone();
       }
+    } else if (type === 'attacking') {
+      console.log('attacking => ', data);
+      attacking = data;
     }
   }
 });

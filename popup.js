@@ -15,7 +15,7 @@ chrome.storage.local.get('red', (data) => {
   if (data.red) {
     attackSwitchOn();
   } else {
-    attachSwitchOff();
+    attackSwitchOff();
   }
 });
 
@@ -117,18 +117,22 @@ function blockSwitchOff() {
 }
 
 function attackSwitchOff() {
+  console.log('attackSwitchOff');
   attackSwitch.checked = false;
   attackDisclaimer.classList.add('is-hidden');
   hideAttackBadge();
   chrome.storage.local.set({red: false});
+  messageContentScript('attacking', false);
 }
 
 function attackSwitchOn() {
+  console.log('attackSwitchOn');
   attackSwitch.checked = true;
   attackDisclaimer.classList.remove('is-hidden');
   exposeSwitchOn();
   showAttackBadge();
   chrome.storage.local.set({red: true});
+  messageContentScript('attacking', true);
 }
 
 attackSwitch.onchange = function(e) {
