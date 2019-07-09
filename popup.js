@@ -159,7 +159,7 @@ blockSwitch.onchange = function(e) {
 
 // Set the switch label
 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-  let URL = webkitURL || URL;
+  let URL = window.webkitURL || window.URL;
   let currentURL = new URL(tabs[0].url);
   exposeLabel.innerText = 'Expose tracked pixel on ' + currentURL.hostname;
 });
