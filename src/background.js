@@ -24,7 +24,6 @@ chrome.runtime.onInstalled.addListener(function() {
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
     chrome.declarativeContent.onPageChanged.addRules([{
       conditions: [new chrome.declarativeContent.PageStateMatcher({
-        // pageUrl: {hostEquals: 'developer.chrome.com'},
         pageUrl: {hostEquals: '*'},
       })],
       actions: [new chrome.declarativeContent.ShowPageAction()]
@@ -33,7 +32,6 @@ chrome.runtime.onInstalled.addListener(function() {
 });
 
 chrome.tabs.onActivated.addListener((info) => {
-  console.log(info);
   chrome.storage.local.clear();
   hideBadge();
   chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
@@ -43,7 +41,6 @@ chrome.tabs.onActivated.addListener((info) => {
 });
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  console.log('background received message ' + message);
   if (message.found !== undefined) {
     if (message.found) {
       showFoundBadge();
@@ -51,10 +48,8 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       hideBadge();
     }
   } else if (message.type !== undefined) {
-    console.log('block message');
     const {type, data} = message;
     if (type === 'block') {
-      console.log('blocking?: ', data);
       blockAll = data;
     }
   }
@@ -65,10 +60,8 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 chrome.webRequest.onBeforeRequest.addListener((requestInfo) => {
   const drone = chrome.runtime.getURL("images/drone.png");
   if (!blockAll) {
-    console.log('not blocking');
     return {cancel: false};
   } else if (requestInfo.type === "image" && requestInfo.url !== drone) {
-    console.log('blocking');
     return {cancel: true};
   }
 }, {urls: ["<all_urls>"]}, ["blocking"]);

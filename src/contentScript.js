@@ -1,15 +1,11 @@
-console.log('content run');
+console.debug('contentScript running');
 
 chrome.storage.local.clear(() => {
-  console.log('local storage cleared');
+  console.debug('storage cleared');
 });
 
-chrome.storage.local.set({green: true}, () => {
-  console.log('green is go');
-});
-chrome.storage.local.set({red: false}, () => {
-  console.log('red is no');
-});
+chrome.storage.local.set({green: true});
+chrome.storage.local.set({red: false});
 
 let attacking = false;
 let pixelTag = findPixelTag();
@@ -20,16 +16,13 @@ const height = 'auto';
 const className = 'hvr-bob';
 
 function findPixelTag() {
-  console.log('findPixelTag');
   let pixelTag = document.querySelector("img[width='1'], img[height='1']");
   if (pixelTag) {
+    console.debug('found a pixel tracker');
     let sourceURL = pixelTag.src;
-    console.log('found a pixel');
     chrome.runtime.sendMessage({pixelTagURL: sourceURL});
     chrome.storage.local.set({pixelTagURL: sourceURL});
-    chrome.runtime.sendMessage({found: true}, function() {
-      console.log('found one');
-    });
+    chrome.runtime.sendMessage({found: true});
     chrome.storage.local.set({found: true});
     chrome.storage.local.get(['green'], (data) => {
       if (data.green) {
@@ -37,17 +30,14 @@ function findPixelTag() {
       }
     });
   } else {
-    console.log('no pixel found');
-    chrome.runtime.sendMessage({found: false}, () => {
-      console.log('not found');
-    });
+    console.debug('no pixel tracker found');
+    chrome.runtime.sendMessage({found: false});
     chrome.storage.local.set({found: false});
   }
   return pixelTag;
 }
 
 function showDrone() {
-  console.log('show');
   pixelTag.src = replaceURL;
   pixelTag.style.width = width;
   pixelTag.style.height = height;
@@ -56,7 +46,7 @@ function showDrone() {
   pixelTag.onclick = (_e) => {
     chrome.storage.local.get(['red'], (data) => {
       if (data.red) {
-        console.log('Attacking ' + sourceURL);
+        // console.debug('Attacking ' + sourceURL);
         // let n = 0;
         let interval = setInterval(() => {
           // if (n >= 50) {
@@ -68,7 +58,6 @@ function showDrone() {
           //   }, 1000);
           // }
           let val = getRandomAngle(0, 360);
-          console.log(val);
           if (pixelTag.className !== 'hvr-buzz') {
             pixelTag.className = 'hvr-buzz';
           }
@@ -77,7 +66,6 @@ function showDrone() {
           } else {
             pixelTag.style.filter = `hue-rotate(${val}deg)`;
           }
-          // console.log(pixelTag.style.filter);
           // n++;
         }, 200);
 
@@ -105,7 +93,7 @@ function showDrone() {
 
           let cb = (worker) => {
             if (!attacking) {
-              console.log('clean up');
+              console.debug('cleaning up Web Workers');
               workerPool.forEach((worker) => worker.terminate());
               clearInterval(interval);
               setTimeout(() => {
@@ -114,13 +102,8 @@ function showDrone() {
               }, 1000);
             } else {
               worker.postMessage([sourceURL]);
-              console.log('Message posted to worker');
-              worker.onmessage = (e) => {
-                let result = e.data;
-                console.log('Message received from worker: ' + result);
-                // worker.terminate();
+              worker.onmessage = (_) => {
                 counter--;
-                console.log('counter: ', counter);
                 if (counter <= 0) {
                   counter = maxWorkers;
                   workerPool.forEach(cb);
@@ -130,7 +113,6 @@ function showDrone() {
           };
 
           workerPool.forEach(cb);
-          // clearInterval(interval);
         };
       }
     });
@@ -138,7 +120,6 @@ function showDrone() {
 }
 
 function hideDrone() {
-  console.log('hide');
   pixelTag.src = sourceURL;
   pixelTag.style.width = '1px';
   pixelTag.style.height = '1px';
@@ -146,8 +127,7 @@ function hideDrone() {
 }
 
 // Checked
-chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  console.log('receiving');
+chrome.runtime.onMessage.addListener((message) => {
   if (message === 'findTag') {
     findPixelTag();
   } else {
@@ -159,50 +139,13 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         hideDrone();
       }
     } else if (type === 'attacking') {
-      console.log('attacking => ', data);
       attacking = data;
     }
   }
 });
-
-// if (pixelTag) {
-//   console.log('found a pixel');
-//   // chrome.runtime.sendMessage({found: true}, () => {
-//   chrome.runtime.sendMessage({found: true}, function() {
-//     console.log('found one');
-//   });
-//   chrome.storage.local.set({found: true});
-//   chrome.storage.local.get(['green'], (data) => {
-//     if (data.green) {
-//       showDrone();
-//     }
-//   });
-// } else {
-//   console.log('no pixel found');
-//   chrome.runtime.sendMessage({found: false}, () => {
-//     console.log('not found');
-//   });
-//   chrome.storage.local.set({found: false});
-// }
 
 function getRandomAngle(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min;
 }
-
-/* Subscription to storage */
-/*
-chrome.storage.local.onChanged.addListener(function(changes) {
-  console.log(`localStorage changing...`);
-  console.log(changes);
-});
-*/
-
-// chrome.runtime.onMessage.addListener((message, _sender, _res) => {
-//   const {attackMode} = message;
-//   console.log(`got message attack moder: ${attackMode}`);
-//   chrome.storage.local.set({attackMode}, function() {
-//     console.debug(`attack mode is now ${attackMode}`);
-//   });
-// });

@@ -36,7 +36,6 @@ const O = '●';
 // Send message to the active current tab.
 function messageContentScript(type, data) {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    console.log('sending data to content script at tab ' + tabs[0].id);
     chrome.tabs.sendMessage(tabs[0].id, {type, data});
   });
 }
@@ -72,9 +71,7 @@ function hideAttackBadge() {
 }
 
 chrome.runtime.onMessage.addListener((message) => {
-  console.log('message did receive');
   if (message.found) {
-    console.log('found one, better light up');
     showFoundBadge();
   }
 });
@@ -82,7 +79,6 @@ chrome.runtime.onMessage.addListener((message) => {
 /* Switch handlers */
 exposeSwitch.onchange = (e) => {
   let isChecked = exposeSwitch.checked;
-  console.log('exposeSwitch ', isChecked);
   if (isChecked) {
     exposeSwitchOn();
   } else {
@@ -117,7 +113,6 @@ function blockSwitchOff() {
 }
 
 function attackSwitchOff() {
-  console.log('attackSwitchOff');
   attackSwitch.checked = false;
   attackDisclaimer.classList.add('is-hidden');
   hideAttackBadge();
@@ -126,7 +121,6 @@ function attackSwitchOff() {
 }
 
 function attackSwitchOn() {
-  console.log('attackSwitchOn');
   attackSwitch.checked = true;
   attackDisclaimer.classList.remove('is-hidden');
   exposeSwitchOn();
@@ -138,7 +132,6 @@ function attackSwitchOn() {
 attackSwitch.onchange = function(e) {
   // Toggle more info
   let isChecked = attackSwitch.checked;
-  console.log('red: ', isChecked);
   if (isChecked) {
     attackSwitchOn();
   } else {
