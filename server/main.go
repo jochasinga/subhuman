@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"path/filepath"
@@ -18,17 +19,19 @@ func enableCors(w *http.ResponseWriter) {
 }
 
 func main() {
-	// fs := MyHandler(func(w http.ResponseWriter, r *http.Request) {
-	// 	enableCors(&w)
-	// 	http.FileServer(http.Dir("static"))
-	// 	fmt.Println(r.Method)
-	// 	fmt.Println(r.URL.Path)
-	// 	fmt.Println(r.Header)
-	// 	fmt.Println(r.RemoteAddr)
-	// })
-	fs := http.FileServer(http.Dir("static"))
+	requestCounter := 0
+	handler := MyHandler(func(w http.ResponseWriter, r *http.Request) {
+		// fmt.Println(r.Method)
+		// fmt.Println(r.URL.Path)
+		// fmt.Println(r.Header)
+		// fmt.Println(r.RemoteAddr)
+		requestCounter++
+		fmt.Println("Request #", requestCounter)
+		enableCors(&w)
+		http.FileServer(http.Dir("static")).ServeHTTP(w, r)
+	})
 
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	http.Handle("/static/", http.StripPrefix("/static/", handler))
 
 	http.HandleFunc("/", serveTemplate)
 

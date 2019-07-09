@@ -13,7 +13,7 @@ chrome.storage.local.set({red: false}, () => {
 
 let attacking = false;
 let pixelTag = findPixelTag();
-let sourceURL = pixelTag.src;
+let sourceURL = pixelTag ? pixelTag.src : '';
 let replaceURL = chrome.runtime.getURL("images/drone.png");
 const width = '4rem';
 const height = 'auto';
@@ -45,26 +45,6 @@ function findPixelTag() {
   }
   return pixelTag;
 }
-
-// Checked
-// chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-//   console.log('receiving');
-//   if (message === 'findTag') {
-//     findPixelTag();
-//   } else {
-//     const {type, data} = message;
-//     if (type === 'show') {
-//       if (data) {
-//         showDrone();
-//       } else {
-//         hideDrone();
-//       }
-//     } else if (type === 'attacking') {
-//       console.log('attacking => ', data);
-//       attacking = data;
-//     }
-//   }
-// });
 
 function showDrone() {
   console.log('show');
