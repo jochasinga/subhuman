@@ -43,13 +43,10 @@ def setup():
                     name=source,
                     dest=os.path.join(dist, name)
                 )
-                print(shlex.split(cmd))
                 p = subprocess.Popen(shlex.split(cmd))
                 out, err = p.communicate()
                 if err:
                     print(err)
-                else:
-                    print(out)
             else:
                 shutil.copy(source, dist)
 
