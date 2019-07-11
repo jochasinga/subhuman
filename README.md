@@ -60,6 +60,6 @@ To build from this repo, follow [this guide](https://developer.chrome.com/extens
 Not in this order:
 
 + Better Web Workers optimization
-+ Distributed server-side attacks
++ Distributed server-side rejections of service
 + Options to choose image substitution
 + Better attack animation
